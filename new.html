@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html class="hh1">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			#app{
+				width: 700px;
+				height: 300px;
+				margin: 0 auto;
+				border:1px solid red;
+			 	}
+			 p{
+			 	width: 300px;
+				margin-left: 200px;		 
+			 }
+		</style>
+		<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+		<script src="js/drag.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="app">
+			<a>2</a>
+			<p class='p1'>dddddddddddddddd</p>			
+		</div>
+	</body>		
+	<script type="text/javascript">
+	//使用on进行单个事件绑定
+		$('p').on('click',function(){
+			$(this)
+			console.log($(this));
+		})
+	//使用on进行多个事件绑定绑定一个函数
+		$('p').on('mouseover click',function(){
+			console.log($(this).html());
+			
+		})
+	//调用函数时传入自定义参数
+	$('p').on('click',{name:'李氏'},function(event){
+		console.log(event.data.name)
+	})
+	// 使用on进行多事件多函数绑定
+	$('p').on({
+		click:function(){
+		
+		},
+		mouseover:function(){
+		
+		}
+	
+	})
+	
+	// 使用on进行事件委派
+	//将原来的绑定事件改为绑定在父级元素乃至更元素，，
+	$('p').click(function(){})
+	$(document).on('click','p',function(){
+		
+	})	//默认的绑定方式，只能绑定到页面初始时已有的p元素，当页面新增p元素时，无法绑定到新元素上；使用事件委派方式，当页面新增元素时，可以为所有新元素绑定事件
+	//off 取消绑定事件
+	$("p").off(): 取消所有事件
+	 $("p").off("click"): 取消点击事件
+	  $("p").off("click mouseover"):取消多个事件
+		$(document).off("click","p"):取消事件委派
+		
+		
+		
+
+一、通过object实现继承
+
+1：定义父类
+function Parent(){}
+2：定义子类
+funtion Son(){}
+3：通过原型给Object对象添加一个扩展方法。
+Object.prototype.customExtend = function(parObj){
+for(var i in parObj){ 
+// 通过for-in循环，把父类的所有属性方法，赋值给自己
+this[i] = parObj[i];
+}
+}
+4：子类对象调用扩展方法
+Son.customExtend(Parent);
+
+ 1         // 1.定义父类
+ 2         function Person(name,age){
+ 3             this.name = name;
+ 4             this.age = age;
+ 5             this.say = function(){
+ 6             alert(this.name+":"+this.age);
+ 7             }
+ 8         }
+ 9         // 2.定义子类
+10         function Student(no){
+11             this.no = no;
+12             this.add = function(a,b){
+13                 alert(a+b);
+14             }
+15         }
+16         function Programmer(lang){
+17             this.lang = lang;
+18             this.codding = function(){
+19                 alert("我爱敲代码！敲代码使我快乐！");
+20             }
+21         }
+22         // 3.通过原型给Object对象添加一个扩展方法。
+23         Object.prototype.customExtend = function(parObj){
+24             for(var i in parObj){ 
+25                 // 通过for-in循环，把父类的所有属性方法，赋值给自己
+26                    this[i] = parObj[i];
+27             }
+28         }
+29         
+30         var p = new Person("小明","18");
+31         var s = new Student("0001");
+32         s.customExtend(p);//现在s继承了p的所有属性和方法。
+33         console.log(s)
+34         
+35         var pro = new Programmer("JavaScript");
+36         pro.customExtend(p);
+37         console.log(pro)
+38         
+二、使用call和apply进行继承
+
+首先，了解一下call和apply：通过函数名调用方法，强行将函数中的this指向某个对象；
+ call写法： func.call(func的this指向的obj,参数1,参数2...);
+ apply写法： func.apply(func的this指向的obj,[参数1,参数2...]);
+call与apply的唯一区别：在于接收func函数的参数方式不同。call采用直接写多个参数的方式，而apply采用是一个数组封装所有参数。
+② 使用call和apply
+1：定义父类
+funtion Parent(){}
+2：定义子类
+function Son(){}
+3：在子类中通过call方法或者apply方法去调用父类。
+function Son(){
+Parent.call(this,....);
+}
+
+ 1 function Person(name,age){
+ 2             this.name = name;
+ 3             this.age = age;
+ 4             this.say = function(){
+ 5                 alert("我叫："+this.name+";今年："+this.age+"岁");
+ 6             }
+ 7         }
+ 8 function Student(no,stuName,stuAge){
+ 9             
+10             this.no = no;
+11             Person.call(this,stuName,stuAge);
+12                  }
+13 var stu = new Student(12,"zhangsan",14);
+14         stu.say();
+15         
+16         console.log(stu)
+三、使用原型继承
+
+③ 使用原型继承
+1：定义父类
+function Parent(){}
+2：定义子类
+function Son(){}
+3：把在子类对象的原型对象声明为父类的实例。
+Son.prototype = new Parent();
+
+ 1 function Person(name,age){
+ 2             this.name = name;
+ 3             this.age = age;
+ 4             this.say = function(){
+ 5                 alert("我叫："+this.name+";今年："+this.age+"岁");
+ 6             }
+ 7         }
+ 8 function Student(no){
+ 9             this.no = no;
+10         }
+11         
+12         Student.prototype = new Person("张三",14)
+13         
+14         var stu = new Student(12);
+15         
+16         stu.say();
+17         
+18         console.log(stu)
+		
+	</script>
+	//重置css js  是为了提高代码的复用性；；；；；；
+	1.event.stopPropagation(); 
+	事件处理过程中，阻止了事件冒泡，但不会阻击默认行为（它就执行了超链接的跳转） 
+	2.returnfalse; 
+	事件处理过程中，阻止了事件冒泡，也阻止了默认行为（比如刚才它就没有执行超链接的跳转） 
+	还有一种有冒泡有关的： 
+	3.event.preventDefault();
+
+	
+</html>
